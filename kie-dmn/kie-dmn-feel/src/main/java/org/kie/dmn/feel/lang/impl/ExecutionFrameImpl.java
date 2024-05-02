@@ -53,17 +53,17 @@ public class ExecutionFrameImpl
     @Override
     public Object getValue(String symbol) {
         symbol = EvalHelper.normalizeVariableName( symbol );
+        if ( variables.containsKey( symbol ) ) {
+            return variables.get( symbol );
+        }
+        if (parentFrame != null && parentFrame.isDefined(symbol)) {
+            return parentFrame.getValue( symbol );
+        }
         if (rootObject != null) {
             PropertyValueResult dv = EvalHelper.getDefinedValue(rootObject, symbol);
             if (dv.isDefined()) {
                 return dv.getValueResult().getOrElse(null);
             }
-        }
-        if ( variables.containsKey( symbol ) ) {
-            return variables.get( symbol );
-        }
-        if ( parentFrame != null ) {
-            return parentFrame.getValue( symbol );
         }
         return null;
     }
